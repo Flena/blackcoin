@@ -673,7 +673,11 @@ public:
     unsigned int GetStakeEntropyBit() const
     {
         // Take last bit of block hash as entropy bit
-        unsigned int nEntropyBit = ((GetHash().GetLow64()) & 1llu);
+        unsigned int nEntropyBit;
+        if (IsProtocolV3(nTime) && IsProofOfStake())
+            nEntropyBit = vtx[1].vin[0].prevout.hash.GetLow64() & 1llu;
+        else
+            nEntropyBit = ((GetHash().GetLow64()) & 1llu);
         LogPrint("stakemodifier", "GetStakeEntropyBit: hashBlock=%s nEntropyBit=%u\n", GetHash().ToString(), nEntropyBit);
         return nEntropyBit;
     }
